@@ -1,5 +1,9 @@
 const usersRepo = require('./user.memory.repository');
 
-const getAll = () => usersRepo.getAll();
+const getAll = async () => usersRepo.getAll();
 
-module.exports = { getAll };
+const save = async user => usersRepo.save(user);
+
+const get = async id => usersRepo.get(id);
+
+module.exports = { getAll, save, get };

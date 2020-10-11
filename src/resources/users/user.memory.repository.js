@@ -1,7 +1,20 @@
-const { getAllEntities, dbKeys } = require('../../utils/db');
+const {
+  getAllEntities,
+  saveEntity,
+  getEntity,
+  dbKeys
+} = require('../../utils/db');
 
 const getAll = async () => {
   return getAllEntities(dbKeys.Users);
 };
 
-module.exports = { getAll };
+const save = async user => {
+  return saveEntity(dbKeys.Users, user);
+};
+
+const get = async id => {
+  return getEntity(dbKeys.Users, id);
+};
+
+module.exports = { getAll, save, get };
