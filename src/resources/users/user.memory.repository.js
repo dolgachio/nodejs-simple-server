@@ -1,6 +1,7 @@
+const { getAllEntities, dbKeys } = require('../../utils/db');
+
 const getAll = async () => {
-  // TODO: mock implementation. should be replaced during task development
-  return [];
+  return getAllEntities(dbKeys.Users);
 };
 
 module.exports = { getAll };
