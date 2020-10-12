@@ -1,11 +1,13 @@
 const { NotFoundError } = require('../../utils/not-found-error');
 
 const dbKeys = {
-  Users: 'users'
+  Users: 'users',
+  Boards: 'boards'
 };
 
 const data = {
-  [dbKeys.Users]: []
+  [dbKeys.Users]: [],
+  [dbKeys.Boards]: []
 };
 
 async function getAllEntities(tableKey) {

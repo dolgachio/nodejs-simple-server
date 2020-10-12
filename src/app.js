@@ -3,6 +3,7 @@ const swaggerUI = require('swagger-ui-express');
 const path = require('path');
 const YAML = require('yamljs');
 const userRouter = require('./resources/users/user.router');
+const boardRouter = require('./resources/boards/board.router');
 
 const { errorMiddleware } = require('./utils/error-middleware');
 
@@ -22,6 +23,7 @@ app.use('/', (req, res, next) => {
 });
 
 app.use('/users', userRouter);
+app.use('/boards', boardRouter);
 
 app.use(errorMiddleware);
 
