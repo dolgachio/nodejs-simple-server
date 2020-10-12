@@ -8,7 +8,6 @@ class Column {
   }
 
   static isValid(columnData) {
-    console.log(columnData);
     return (
       !!columnData &&
       typeof columnData.title === 'string' &&

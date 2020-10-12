@@ -1,6 +1,7 @@
 const usersRepo = require('./user.memory.repository');
 const User = require('./user.model');
 const { BadRequestError } = require('../../utils/bad-request-error');
+const taskService = require('../tasks/task.service');
 
 const getAll = async () => usersRepo.getAll();
 
@@ -18,7 +19,21 @@ const update = async (id, userData) => {
   return usersRepo.update(id, userData);
 };
 
-const deleteUser = async id => usersRepo.delete(id);
+const deleteUser = async id => {
+  const result = await usersRepo.delete(id);
+
+  const tasks = await taskService.getAll();
+
+  tasks.forEach(async task => {
+    if (task.userId === id) {
+      const taskData = Object.assign({}, task, { userId: null });
+
+      await taskService.update(task.id, taskData);
+    }
+  });
+
+  return result;
+};
 
 const get = async id => usersRepo.get(id);
 

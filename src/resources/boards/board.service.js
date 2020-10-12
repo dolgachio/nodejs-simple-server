@@ -2,6 +2,7 @@ const boardsRepo = require('./boards.memory.repository');
 const Board = require('./board.model');
 const Column = require('./column.model');
 const { BadRequestError } = require('../../utils/bad-request-error');
+const taskService = require('../tasks/task.service');
 
 const getAll = async () => boardsRepo.getAll();
 
@@ -9,7 +10,17 @@ const save = async board => boardsRepo.save(board);
 
 const get = async id => boardsRepo.get(id);
 
-const deleteBoard = async id => boardsRepo.delete(id);
+const deleteBoard = async id => {
+  await boardsRepo.delete(id);
+
+  const tasks = await taskService.getAll();
+
+  tasks.forEach(async task => {
+    if (task.boardId === id) {
+      await taskService.delete(task.id);
+    }
+  });
+};
 
 const update = async (id, boardData) => {
   const isValid = Board.isValid(boardData);
