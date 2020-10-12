@@ -13,7 +13,6 @@ router.route('/').get(
 router.route('/').post(
   wrapAsync(async (req, res) => {
     const boardId = req.params.boardId;
-    console.log(boardId);
     const taskData = req.body;
     const task = Task.fromRequest(taskData, boardId);
 
