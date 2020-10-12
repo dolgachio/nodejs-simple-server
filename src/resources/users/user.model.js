@@ -21,6 +21,14 @@ class User {
   static fromRequest(user) {
     return new User(user);
   }
+
+  static isValid(userData) {
+    return (
+      typeof userData.name === 'string' &&
+      typeof userData.login === 'string' &&
+      typeof userData.password === 'string'
+    );
+  }
 }
 
 module.exports = User;

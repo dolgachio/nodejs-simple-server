@@ -2,6 +2,8 @@ const {
   getAllEntities,
   saveEntity,
   getEntity,
+  updateEntity,
+  deleteEntity,
   dbKeys
 } = require('../../utils/db');
 
@@ -17,4 +19,12 @@ const get = async id => {
   return getEntity(dbKeys.Users, id);
 };
 
-module.exports = { getAll, save, get };
+const update = async (id, userData) => {
+  return updateEntity(dbKeys.Users, id, userData);
+};
+
+const deleteUser = async id => {
+  return deleteEntity(dbKeys.Users, id);
+};
+
+module.exports = { getAll, save, get, update, delete: deleteUser };

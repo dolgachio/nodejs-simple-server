@@ -22,6 +22,27 @@ router.route('/').post(
   })
 );
 
+router.route('/:id').put(
+  wrapAsync(async (req, res) => {
+    const id = req.params.id;
+    const userData = req.body;
+
+    const user = await usersService.update(id, userData);
+
+    // map user fields to exclude secret fields like "password"
+    res.status(200).json(User.toResponse(user));
+  })
+);
+
+router.route('/:id').delete(
+  wrapAsync(async (req, res) => {
+    const id = req.params.id;
+    await usersService.delete(id);
+    // map user fields to exclude secret fields like "password"
+    res.status(204).send();
+  })
+);
+
 router.route('/:id').get(
   wrapAsync(async (req, res) => {
     const id = req.params.id;

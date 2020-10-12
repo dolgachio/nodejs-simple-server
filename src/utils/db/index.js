@@ -23,15 +23,44 @@ async function getEntity(tableKey, id) {
   const entity = table.find(item => item.id === id);
 
   if (!entity) {
-    throw new NotFoundError(`No user with id: ${id}`);
+    throw new NotFoundError(`No entity with id: ${id}`);
   }
 
   return entity;
+}
+
+async function updateEntity(tableKey, id, entity) {
+  const table = data[tableKey];
+  const entityIndex = table.findIndex(item => item.id === id);
+
+  if (entityIndex === -1) {
+    throw new NotFoundError(`No entity with id: ${id}`);
+  }
+
+  entity.id = id;
+  table[entityIndex] = entity;
+
+  return entity;
+}
+
+async function deleteEntity(tableKey, id) {
+  const table = data[tableKey];
+  const isEntityExist = table.some(item => item.id === id);
+
+  if (!isEntityExist) {
+    throw new NotFoundError(`No entity with id: ${id}`);
+  }
+
+  data[tableKey] = table.filter(item => item.id !== id);
+
+  return null;
 }
 
 module.exports = {
   dbKeys,
   getAllEntities,
   saveEntity,
-  getEntity
+  getEntity,
+  updateEntity,
+  deleteEntity
 };
