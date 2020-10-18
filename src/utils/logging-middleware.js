@@ -1,15 +1,14 @@
-const { finished } = require('stream');
+const { logger } = require('./logger');
 
 function loggingMiddleware(req, res, next) {
-  const { method, url } = req;
-  const start = Date.now();
-
-  finished(res, () => {
-    const ms = Date.now() - start;
-    const { statusCode } = res;
-
-    console.log(`${method} ${url} ${statusCode} [${ms}]ms`);
+  const { url, query, body } = req;
+  const logInfo = JSON.stringify({
+    url,
+    query,
+    body
   });
+
+  logger.info(logInfo);
 
   next();
   return;

@@ -6,7 +6,10 @@ const userRouter = require('./resources/users/user.router');
 const boardRouter = require('./resources/boards/board.router');
 const taskRouter = require('./resources/tasks/task.router');
 
-const { errorMiddleware } = require('./utils/error-middleware');
+const {
+  errorMiddleware,
+  internalServerErrorMiddleware
+} = require('./utils/error-middleware');
 const { loggingMiddleware } = require('./utils/logging-middleware');
 
 const app = express();
@@ -30,5 +33,6 @@ boardRouter.use('/:boardId/tasks', taskRouter);
 app.use('/boards', boardRouter);
 
 app.use(errorMiddleware);
+app.use(internalServerErrorMiddleware);
 
 module.exports = app;
