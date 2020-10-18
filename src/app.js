@@ -6,11 +6,15 @@ const userRouter = require('./resources/users/user.router');
 const boardRouter = require('./resources/boards/board.router');
 const taskRouter = require('./resources/tasks/task.router');
 
-const {
-  errorMiddleware,
-  internalServerErrorMiddleware
-} = require('./utils/error-middleware');
+const { errorMiddleware } = require('./utils/error-middleware');
 const { loggingMiddleware } = require('./utils/logging-middleware');
+const {
+  uncaughtExceptionHandler,
+  unhandledRejectionHandler
+} = require('./utils/exception-handlers');
+
+process.on('uncaughtException', uncaughtExceptionHandler);
+process.on('unhandledRejection', unhandledRejectionHandler);
 
 const app = express();
 const swaggerDocument = YAML.load(path.join(__dirname, '../doc/api.yaml'));
@@ -33,6 +37,5 @@ boardRouter.use('/:boardId/tasks', taskRouter);
 app.use('/boards', boardRouter);
 
 app.use(errorMiddleware);
-app.use(internalServerErrorMiddleware);
 
 module.exports = app;

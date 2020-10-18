@@ -15,12 +15,4 @@ function errorMiddleware(err, req, res, next) {
   return;
 }
 
-function internalServerErrorMiddleware(err, req, res) {
-  const httpError = new createError.InternalServerError(JSON.stringify(err));
-
-  res.status(httpError.statusCode).send(httpError);
-
-  return;
-}
-
-module.exports = { errorMiddleware, internalServerErrorMiddleware };
+module.exports = { errorMiddleware };
