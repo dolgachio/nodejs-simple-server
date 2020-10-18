@@ -13,12 +13,11 @@ router.route('/').get(
 
 router.route('/').post(
   wrapAsync(async (req, res) => {
-    const userData = req.body;
-    const user = User.fromRequest(userData);
-    await usersService.save(user);
+    const user = req.body;
+    const savedUser = await usersService.save(user);
 
     // map user fields to exclude secret fields like "password"
-    res.status(200).json(User.toResponse(user));
+    res.status(200).json(User.toResponse(savedUser));
   })
 );
 

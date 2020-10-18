@@ -1,12 +1,25 @@
+const createError = require('http-errors');
+
 const boardsRepo = require('./boards.memory.repository');
 const Board = require('./board.model');
 const Column = require('./column.model');
-const { BadRequestError } = require('../../utils/bad-request-error');
 const taskService = require('../tasks/task.service');
 
 const getAll = async () => boardsRepo.getAll();
 
-const save = async board => boardsRepo.save(board);
+const save = async board => {
+  const isValid = Board.isValid(board);
+
+  if (!isValid) {
+    throw new createError.BadRequest(
+      'Fields title, columns are required to save Board'
+    );
+  }
+
+  const boardData = Board.fromRequest(board);
+
+  return boardsRepo.save(boardData);
+};
 
 const get = async id => boardsRepo.get(id);
 
@@ -26,7 +39,7 @@ const update = async (id, boardData) => {
   const isValid = Board.isValid(boardData);
 
   if (!isValid) {
-    throw new BadRequestError(
+    throw new createError.BadRequest(
       'Fields title, columns are required to update Board'
     );
   }

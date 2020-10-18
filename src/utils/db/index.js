@@ -1,4 +1,5 @@
-const { NotFoundError } = require('../../utils/not-found-error');
+// const { createError } = require('../../utils/not-found-error');
+const createError = require('http-errors');
 
 const dbKeys = {
   Users: 'users',
@@ -27,7 +28,7 @@ async function getEntity(tableKey, id) {
   const entity = table.find(item => item.id === id);
 
   if (!entity) {
-    throw new NotFoundError(`No entity with id: ${id}`);
+    throw new createError.NotFound(`No entity with id: ${id}`);
   }
 
   return entity;
@@ -38,7 +39,7 @@ async function updateEntity(tableKey, id, entity) {
   const entityIndex = table.findIndex(item => item.id === id);
 
   if (entityIndex === -1) {
-    throw new NotFoundError(`No entity with id: ${id}`);
+    throw new createError.NotFound(`No entity with id: ${id}`);
   }
 
   entity.id = id;
@@ -52,7 +53,7 @@ async function deleteEntity(tableKey, id) {
   const isEntityExist = table.some(item => item.id === id);
 
   if (!isEntityExist) {
-    throw new NotFoundError(`No entity with id: ${id}`);
+    throw new createError.NotFound(`No entity with id: ${id}`);
   }
 
   data[tableKey] = table.filter(item => item.id !== id);

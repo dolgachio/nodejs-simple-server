@@ -1,6 +1,6 @@
 const tasksRepo = require('./tasks.memory.repository');
 const Task = require('./task.model');
-const { BadRequestError } = require('../../utils/bad-request-error');
+const createError = require('http-errors');
 
 const getAll = async () => tasksRepo.getAll();
 
@@ -14,7 +14,7 @@ const update = async (id, taskData) => {
   const isValid = Task.isValid(taskData);
 
   if (!isValid) {
-    throw new BadRequestError('Fields required to update Task');
+    throw new createError.BadRequest('Fields required to update Task');
   }
 
   return tasksRepo.update(id, taskData);

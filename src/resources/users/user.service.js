@@ -1,17 +1,30 @@
+const createError = require('http-errors');
+
 const usersRepo = require('./user.memory.repository');
 const User = require('./user.model');
-const { BadRequestError } = require('../../utils/bad-request-error');
 const taskService = require('../tasks/task.service');
 
 const getAll = async () => usersRepo.getAll();
 
-const save = async user => usersRepo.save(user);
+const save = async user => {
+  const isValid = User.isValid(user);
+
+  if (!isValid) {
+    throw new createError.BadRequest(
+      'Fields name, login, password are required to save User'
+    );
+  }
+
+  const userData = User.fromRequest(user);
+
+  return usersRepo.save(userData);
+};
 
 const update = async (id, userData) => {
   const isValid = User.isValid(userData);
 
   if (!isValid) {
-    throw new BadRequestError(
+    throw new createError.BadRequest(
       'Fields name, login, password are required to update User'
     );
   }

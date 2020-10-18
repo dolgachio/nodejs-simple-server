@@ -1,31 +1,24 @@
-const { INTERNAL_SERVER_ERROR, getStatusText } = require('http-status-codes');
-const { NotFoundError } = require('./not-found-error');
-const { BadRequestError } = require('./bad-request-error');
+const createError = require('http-errors');
+const { logger } = require('./logger');
 
 function errorMiddleware(err, req, res, next) {
-  if (err instanceof NotFoundError) {
-    res.status(404).send({
-      error: 'NotFoundError',
-      message: err.message
-    });
+  logger.error(JSON.stringify(err));
 
-    return;
-  }
-
-  if (err instanceof BadRequestError) {
-    res.status(400).send({
-      error: 'BadRequestError',
-      message: err.message
-    });
+  if (createError.isHttpError(err)) {
+    res.status(err.statusCode).send(err);
 
     return;
   }
 
   next(err);
+
+  return;
 }
 
 function internalServerErrorMiddleware(err, req, res) {
-  res.status(INTERNAL_SERVER_ERROR).send(getStatusText(INTERNAL_SERVER_ERROR));
+  const httpError = new createError.InternalServerError(JSON.stringify(err));
+
+  res.status(httpError.statusCode).send(httpError);
 
   return;
 }
