@@ -7,11 +7,13 @@ const boardRouter = require('./resources/boards/board.router');
 const taskRouter = require('./resources/tasks/task.router');
 
 const { errorMiddleware } = require('./utils/error-middleware');
+const { loggingMiddleware } = require('./utils/logging-middleware');
 
 const app = express();
 const swaggerDocument = YAML.load(path.join(__dirname, '../doc/api.yaml'));
 
 app.use(express.json());
+app.use(loggingMiddleware);
 
 app.use('/doc', swaggerUI.serve, swaggerUI.setup(swaggerDocument));
 

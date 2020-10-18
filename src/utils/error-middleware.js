@@ -16,6 +16,8 @@ function errorMiddleware(err, req, res, next) {
       error: 'BadRequestError',
       message: err.message
     });
+
+    return;
   }
 
   next(err);
