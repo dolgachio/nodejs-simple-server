@@ -1,13 +1,13 @@
 const createError = require('http-errors');
 
-const usersRepo = require('./user.memory.repository');
+const usersRepo = require('./user.db.repository');
 const User = require('./user.model');
 const taskService = require('../tasks/task.service');
 
 const getAll = async () => usersRepo.getAll();
 
-const save = async user => {
-  const isValid = User.isValid(user);
+const save = async userData => {
+  const isValid = User.isValid(userData);
 
   if (!isValid) {
     throw new createError.BadRequest(
@@ -15,9 +15,7 @@ const save = async user => {
     );
   }
 
-  const userData = User.fromRequest(user);
-
-  return usersRepo.save(userData);
+  return usersRepo.save(User.fromRequest(userData));
 };
 
 const update = async (id, userData) => {
@@ -29,7 +27,7 @@ const update = async (id, userData) => {
     );
   }
 
-  return usersRepo.update(id, userData);
+  return usersRepo.update(id, User.fromRequest(userData));
 };
 
 const deleteUser = async id => {
