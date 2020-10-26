@@ -11,6 +11,7 @@ const initDB = async () => {
 
   const initPromise = new Promise((resolve, reject) => {
     const db = mongoose.connection;
+
     db.on('error', () => {
       const error = new createError.InternalServerError(
         'Cannot Connect To DB...'

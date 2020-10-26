@@ -1,11 +1,15 @@
 const createError = require('http-errors');
 
-const boardsRepo = require('./boards.memory.repository');
+const boardsRepo = require('./boards.db.repository');
 const Board = require('./board.model');
-const Column = require('./column.model');
+const { Column } = require('./column.model');
 const taskService = require('../tasks/task.service');
 
-const getAll = async () => boardsRepo.getAll();
+const getAll = async () => {
+  const boards = await boardsRepo.getAll();
+
+  return boards.map(normalizeBoard);
+};
 
 const save = async board => {
   const isValid = Board.isValid(board);
@@ -18,13 +22,27 @@ const save = async board => {
 
   const boardData = Board.fromRequest(board);
 
-  return boardsRepo.save(boardData);
+  const boardFromDB = await boardsRepo.save(boardData);
+
+  return normalizeBoard(boardFromDB);
 };
 
-const get = async id => boardsRepo.get(id);
+const get = async id => {
+  const board = await boardsRepo.get(id);
+
+  if (!board) {
+    throw new createError.NotFound('No Board with id: ', id);
+  }
+
+  return normalizeBoard(board);
+};
 
 const deleteBoard = async id => {
-  await boardsRepo.delete(id);
+  const board = await boardsRepo.delete(id);
+
+  if (!board) {
+    throw new createError.NotFound('No Board with id: ', id);
+  }
 
   const tasks = await taskService.getAll();
 
@@ -54,7 +72,13 @@ const update = async (id, boardData) => {
 
   boardData.columns = columns;
 
-  return boardsRepo.update(id, boardData);
+  const resultBoard = await boardsRepo.update(id, boardData);
+
+  return normalizeBoard(resultBoard);
 };
+
+function normalizeBoard({ _id: id, title, columns }) {
+  return { id, title, columns };
+}
 
 module.exports = { getAll, save, get, delete: deleteBoard, update };

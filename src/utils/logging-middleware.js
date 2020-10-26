@@ -1,8 +1,9 @@
 const { logger } = require('./logger');
 
 function loggingMiddleware(req, res, next) {
-  const { url, query, body } = req;
+  const { method, url, query, body } = req;
   const logInfo = JSON.stringify({
+    method,
     url,
     query,
     body

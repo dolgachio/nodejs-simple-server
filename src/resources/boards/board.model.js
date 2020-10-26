@@ -1,26 +1,31 @@
 const uuid = require('uuid');
-const Column = require('./column.model');
+const { Column, columnSchema } = require('./column.model');
 
-class Board {
-  constructor({ id = uuid(), title = 'BOARD', columns = [] } = {}) {
-    this.id = id;
-    this.title = title;
-    this.columns = columns;
-  }
+const mongoose = require('mongoose');
 
-  static fromRequest(board) {
-    const columns = board.columns.map(column => new Column(column));
-    const boardWithColumns = Object.assign({}, board, { columns });
+const boardSchema = new mongoose.Schema(
+  {
+    title: String,
+    columns: [columnSchema],
+    _id: {
+      type: String,
+      default: uuid
+    }
+  },
+  { versionKey: false }
+);
 
-    return new Board(boardWithColumns);
-  }
+boardSchema.statics.fromRequest = ({ title, columns }) => {
+  return { title, columns };
+};
 
-  static isValid(boardData) {
-    const isRequiredFields =
-      typeof boardData.title === 'string' && !!boardData.columns;
+boardSchema.statics.isValid = boardData => {
+  const isRequiredFields =
+    typeof boardData.title === 'string' && !!boardData.columns;
 
-    return isRequiredFields && boardData.columns.every(Column.isValid);
-  }
-}
+  return isRequiredFields && boardData.columns.every(Column.isValid);
+};
+
+const Board = mongoose.model('Board', boardSchema);
 
 module.exports = Board;

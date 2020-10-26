@@ -1,19 +1,26 @@
 const uuid = require('uuid');
+const mongoose = require('mongoose');
 
-class Column {
-  constructor({ id = uuid(), title = 'COLUMN', order = 0 } = {}) {
-    this.id = id;
-    this.title = title;
-    this.order = order;
-  }
+const columnSchema = new mongoose.Schema(
+  {
+    title: String,
+    order: Number,
+    _id: {
+      type: String,
+      default: uuid
+    }
+  },
+  { versionKey: false }
+);
 
-  static isValid(columnData) {
-    return (
-      !!columnData &&
-      typeof columnData.title === 'string' &&
-      typeof columnData.order === 'number'
-    );
-  }
-}
+columnSchema.statics.isValid = columnData => {
+  return (
+    !!columnData &&
+    typeof columnData.title === 'string' &&
+    typeof columnData.order === 'number'
+  );
+};
 
-module.exports = Column;
+const Column = mongoose.model('Column', columnSchema);
+
+module.exports = { Column, columnSchema };
