@@ -1,5 +1,4 @@
 const router = require('express').Router({ mergeParams: true });
-const Task = require('./task.model');
 const tasksService = require('./task.service');
 const { wrapAsync } = require('../../utils/wrap-async');
 
@@ -14,9 +13,7 @@ router.route('/').post(
   wrapAsync(async (req, res) => {
     const boardId = req.params.boardId;
     const taskData = req.body;
-    const task = Task.fromRequest(taskData, boardId);
-
-    await tasksService.save(task);
+    const task = await tasksService.save(taskData, boardId);
 
     res.status(200).json(task);
   })

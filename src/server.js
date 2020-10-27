@@ -1,6 +1,6 @@
 const { PORT } = require('./common/config');
 const app = require('./app');
-const initDB = require('./utils/db/init.db');
+const { initDB } = require('./utils/db');
 
 initDB().then(() => {
   app.listen(PORT, () =>

@@ -46,11 +46,11 @@ const deleteBoard = async id => {
 
   const tasks = await taskService.getAll();
 
-  tasks.forEach(async task => {
+  for (const task of tasks) {
     if (task.boardId === id) {
       await taskService.delete(task.id);
     }
-  });
+  }
 };
 
 const update = async (id, boardData) => {

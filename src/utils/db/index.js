@@ -1,70 +1,34 @@
 const createError = require('http-errors');
 
-const dbKeys = {
-  Users: 'users',
-  Boards: 'boards',
-  Tasks: 'tasks'
+const { MONGO_CONNECTION_STRING } = require('../../common/config');
+
+const initDB = async () => {
+  const mongoose = require('mongoose');
+  mongoose.connect(MONGO_CONNECTION_STRING, {
+    useNewUrlParser: true,
+    useUnifiedTopology: true
+  });
+
+  const initPromise = new Promise((resolve, reject) => {
+    const db = mongoose.connection;
+
+    db.on('error', () => {
+      const error = new createError.InternalServerError(
+        'Cannot Connect To DB...'
+      );
+
+      reject(error);
+    });
+    db.once('open', () => {
+      console.log('Successfully connected to DB!');
+
+      resolve({ sucess: true });
+    });
+  }).catch(error => {
+    throw error;
+  });
+
+  return initPromise;
 };
 
-const data = {
-  [dbKeys.Users]: [],
-  [dbKeys.Boards]: [],
-  [dbKeys.Tasks]: []
-};
-
-async function getAllEntities(tableKey) {
-  return data[tableKey] ? data[tableKey] : null;
-}
-
-async function saveEntity(tableKey, entity) {
-  const table = data[tableKey];
-  table.push(entity);
-  return entity;
-}
-
-async function getEntity(tableKey, id) {
-  const table = data[tableKey];
-  const entity = table.find(item => item.id === id);
-
-  if (!entity) {
-    throw new createError.NotFound(`[${tableKey}] No entity with id: ${id}`);
-  }
-
-  return entity;
-}
-
-async function updateEntity(tableKey, id, entity) {
-  const table = data[tableKey];
-  const entityIndex = table.findIndex(item => item.id === id);
-
-  if (entityIndex === -1) {
-    throw new createError.NotFound(`[${tableKey}] No entity with id: ${id}`);
-  }
-
-  entity.id = id;
-  table[entityIndex] = entity;
-
-  return entity;
-}
-
-async function deleteEntity(tableKey, id) {
-  const table = data[tableKey];
-  const isEntityExist = table.some(item => item.id === id);
-
-  if (!isEntityExist) {
-    throw new createError.NotFound(`[${tableKey}] No entity with id: ${id}`);
-  }
-
-  data[tableKey] = table.filter(item => item.id !== id);
-
-  return null;
-}
-
-module.exports = {
-  dbKeys,
-  getAllEntities,
-  saveEntity,
-  getEntity,
-  updateEntity,
-  deleteEntity
-};
+module.exports = { initDB };

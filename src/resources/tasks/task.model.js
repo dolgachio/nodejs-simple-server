@@ -1,38 +1,57 @@
 const uuid = require('uuid');
+const mongoose = require('mongoose');
 
-class Task {
-  constructor(
-    {
-      id = uuid(),
-      title = 'TASK',
-      order = 0,
-      description = 'DESCRIPTION',
-      userId = 'userId',
-      columnId = 'columnId'
-    } = {},
+const taskSchema = new mongoose.Schema(
+  {
+    title: String,
+    order: Number,
+    description: String,
+    userId: String,
+    columnId: String,
+    boardId: String,
+    _id: {
+      type: String,
+      default: uuid
+    }
+  },
+  { versionKey: false }
+);
+
+taskSchema.statics.fromRequest = (taskData, boardId) => {
+  return { ...taskData, boardId };
+};
+
+taskSchema.statics.isValid = taskData => {
+  const areRequiredFieldsExist =
+    typeof taskData.title === 'string' &&
+    typeof taskData.order === 'number' &&
+    typeof taskData.description === 'string';
+
+  return areRequiredFieldsExist;
+};
+
+taskSchema.statics.normalizeIdField = data => {
+  const {
+    _id: id,
+    title,
+    order,
+    description,
+    userId,
+    columnId,
     boardId
-  ) {
-    this.id = id;
-    this.title = title;
-    this.order = order;
-    this.description = description;
-    this.userId = userId;
-    this.boardId = boardId;
-    this.columnId = columnId;
-  }
+  } = data;
 
-  static fromRequest(task, boardId) {
-    return new Task(task, boardId);
-  }
+  return {
+    id,
+    title,
+    order,
+    description,
+    userId,
+    columnId,
+    boardId
+  };
+};
 
-  static isValid(taskData) {
-    const areRequiredFieldsExist =
-      typeof taskData.title === 'string' &&
-      typeof taskData.order === 'number' &&
-      typeof taskData.description === 'string';
-
-    return areRequiredFieldsExist;
-  }
-}
+const Task = mongoose.model('Task', taskSchema);
 
 module.exports = Task;

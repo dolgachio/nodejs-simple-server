@@ -17,7 +17,7 @@ const update = async (id, userData) => {
 };
 
 const deleteUser = async id => {
-  return User.deleteOne({ _id: id }).exec();
+  return User.findOneAndDelete({ _id: id }).exec();
 };
 
 module.exports = { getAll, save, get, update, delete: deleteUser };

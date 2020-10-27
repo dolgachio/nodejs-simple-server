@@ -31,21 +31,30 @@ const update = async (id, userData) => {
 };
 
 const deleteUser = async id => {
-  const result = await usersRepo.delete(id);
+  const user = await usersRepo.delete(id);
+
+  if (!user) {
+    throw new createError.NotFound('No Such User with id: ', id);
+  }
 
   const tasks = await taskService.getAll();
 
-  tasks.forEach(async task => {
+  for (const task of tasks) {
     if (task.userId === id) {
-      const taskData = Object.assign({}, task, { userId: null });
-
-      await taskService.update(task.id, taskData);
+      task.userId = null;
+      await taskService.update(task.id, task);
     }
-  });
-
-  return result;
+  }
 };
 
-const get = async id => usersRepo.get(id);
+const get = async id => {
+  const user = await usersRepo.get(id);
+
+  if (!user) {
+    throw new createError.NotFound('No Such User with id: ', id);
+  }
+
+  return user;
+};
 
 module.exports = { getAll, save, get, update, delete: deleteUser };
