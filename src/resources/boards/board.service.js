@@ -31,7 +31,7 @@ const get = async id => {
   const board = await boardsRepo.get(id);
 
   if (!board) {
-    throw new createError.NotFound('No Board with id: ', id);
+    throw new createError.NotFound(`No Board with id: ${id}`);
   }
 
   return normalizeBoard(board);
@@ -41,7 +41,7 @@ const deleteBoard = async id => {
   const board = await boardsRepo.delete(id);
 
   if (!board) {
-    throw new createError.NotFound('No Board with id: ', id);
+    throw new createError.NotFound(`No Board with id: ${id}`);
   }
 
   const tasks = await taskService.getAll();

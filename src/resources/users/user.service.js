@@ -34,7 +34,7 @@ const deleteUser = async id => {
   const user = await usersRepo.delete(id);
 
   if (!user) {
-    throw new createError.NotFound('No Such User with id: ', id);
+    throw new createError.NotFound(`No Such User with id: ${id}`);
   }
 
   const tasks = await taskService.getAll();
@@ -51,7 +51,7 @@ const get = async id => {
   const user = await usersRepo.get(id);
 
   if (!user) {
-    throw new createError.NotFound('No Such User with id: ', id);
+    throw new createError.NotFound(`No Such User with id: ${id}`);
   }
 
   return user;
