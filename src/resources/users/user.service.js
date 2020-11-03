@@ -1,4 +1,5 @@
 const createError = require('http-errors');
+const bcrypt = require('bcrypt');
 
 const usersRepo = require('./user.db.repository');
 const User = require('./user.model');
@@ -15,7 +16,12 @@ const save = async userData => {
     );
   }
 
-  return usersRepo.save(User.fromRequest(userData));
+  const saltRounds = 10;
+  const passwordHash = await bcrypt.hash(userData.password, saltRounds);
+
+  return usersRepo.save(
+    User.fromRequest({ ...userData, password: passwordHash })
+  );
 };
 
 const update = async (id, userData) => {
