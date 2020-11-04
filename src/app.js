@@ -5,6 +5,7 @@ const YAML = require('yamljs');
 const userRouter = require('./resources/users/user.router');
 const boardRouter = require('./resources/boards/board.router');
 const taskRouter = require('./resources/tasks/task.router');
+const loginRouter = require('./resources/login/login.router');
 
 const { errorMiddleware } = require('./utils/error-middleware');
 const { loggingMiddleware } = require('./utils/logging-middleware');
@@ -32,6 +33,7 @@ app.use('/', (req, res, next) => {
   next();
 });
 
+app.use('/login', loginRouter);
 app.use('/users', userRouter);
 boardRouter.use('/:boardId/tasks', taskRouter);
 app.use('/boards', boardRouter);

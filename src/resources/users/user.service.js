@@ -63,4 +63,8 @@ const get = async id => {
   return user;
 };
 
-module.exports = { getAll, save, get, update, delete: deleteUser };
+const getByLogin = async login => {
+  return await usersRepo.getByLogin(login);
+};
+
+module.exports = { getAll, save, get, getByLogin, update, delete: deleteUser };
