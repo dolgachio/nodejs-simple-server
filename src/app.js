@@ -9,6 +9,7 @@ const loginRouter = require('./resources/login/login.router');
 
 const { errorMiddleware } = require('./utils/error-middleware');
 const { loggingMiddleware } = require('./utils/logging-middleware');
+const { authMiddleware } = require('./utils/auth-middleware');
 const {
   uncaughtExceptionHandler,
   unhandledRejectionHandler
@@ -22,6 +23,7 @@ const swaggerDocument = YAML.load(path.join(__dirname, '../doc/api.yaml'));
 
 app.use(express.json());
 app.use(loggingMiddleware);
+app.use(authMiddleware);
 
 app.use('/doc', swaggerUI.serve, swaggerUI.setup(swaggerDocument));
 
