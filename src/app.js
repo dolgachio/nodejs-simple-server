@@ -23,10 +23,8 @@ const swaggerDocument = YAML.load(path.join(__dirname, '../doc/api.yaml'));
 
 app.use(express.json());
 app.use(loggingMiddleware);
-app.use(authMiddleware);
 
 app.use('/doc', swaggerUI.serve, swaggerUI.setup(swaggerDocument));
-
 app.use('/', (req, res, next) => {
   if (req.originalUrl === '/') {
     res.send('Service is running!');
@@ -36,6 +34,9 @@ app.use('/', (req, res, next) => {
 });
 
 app.use('/login', loginRouter);
+
+/* Routes only after middleware usage are affected by it */
+app.use(authMiddleware);
 app.use('/users', userRouter);
 boardRouter.use('/:boardId/tasks', taskRouter);
 app.use('/boards', boardRouter);

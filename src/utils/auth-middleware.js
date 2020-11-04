@@ -6,16 +6,8 @@ const { JWT_SECRET_KEY } = require('../common/config');
 const { wrapAsync } = require('../utils/wrap-async');
 const asyncVerify = promisify(jwt.verify);
 
-const resourcesWithoutAuth = ['/', '/doc', '/login'];
-
 const authMiddleware = wrapAsync(async (req, res, next) => {
-  const { url, headers } = req;
-  const isAuthNotRequired = resourcesWithoutAuth.includes(url);
-  if (isAuthNotRequired) {
-    next();
-    return;
-  }
-
+  const { headers } = req;
   const { authorization } = headers;
   if (!authorization) {
     throw new createError.Unauthorized('No authorization header');
